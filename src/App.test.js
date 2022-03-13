@@ -31,7 +31,6 @@ const typeIntoForm = ({email, password, confirmPassword }) => {
 }
 
 test('input should be initially epmty', () => {
-  /* {screen} help us to find the element*/
   const email = screen.getByTestId('form-input-email');
   const password = screen.getByTestId('form-input-password');
   const confirmPassword = screen.getByTestId('form-input-confirm-password');
@@ -52,13 +51,8 @@ test('should be able to type a password', () => {
 });
 
 test('should be able to type a confirm password', () => {
-  /* {render()} this method renders the component that we want to test, in the shadow dom and all it children  */
-
-  /* {screen} help us to find the element*/
-  const confirmPassword = screen.getByTestId('form-input-confirm-password');
-  
-  userEvents.type(confirmPassword, '1234');
-  expect(confirmPassword.value).toBe('1234')
+  const { confirmPasswordEl } = typeIntoForm({confirmPassword: '1234'});
+  expect(confirmPasswordEl.value).toBe('1234')
 });
 
 test('should not show email error message', () => {
@@ -67,8 +61,7 @@ test('should not show email error message', () => {
 });
 
 test('should show email error message on invalid email', () => {
-  const email = screen.getByTestId('form-input-email');
-  userEvents.type(email, 'testgmail.com');
+  typeIntoForm({email: 'testgmail.com'})
   
   const submitBtn = screen.getByTestId('form-submit-btn');
   userEvents.click(submitBtn)
@@ -83,8 +76,7 @@ test('should not show password error message', () => {
 });
 
 test('should show password error message on weak password', () => {
-  const password = screen.getByTestId('form-input-password');
-  userEvents.type(password, '1234');
+  typeIntoForm({password: '1234'});
   
   const submitBtn = screen.getByTestId('form-submit-btn');
   userEvents.click(submitBtn)
@@ -99,13 +91,12 @@ test('should not show confirm password error message', () => {
 });
 
 test('should show confirm password error message if password does not match', () => {
-  const password = screen.getByTestId('form-input-password');
-  userEvents.type(password, '1234');
+  const {passwordEl, confirmPasswordEl} = typeIntoForm({
+    password: '1234', 
+    confirmPassword: '1232'
+  });
 
-  const confirmPassword = screen.getByTestId('form-input-confirm-password');
-  userEvents.type(confirmPassword, '1232');
-
-  expect(password !== confirmPassword).toBeTruthy();
+  expect(passwordEl.value !== confirmPasswordEl.value).toBeTruthy();
 
   const submitBtn = screen.getByTestId('form-submit-btn');
   userEvents.click(submitBtn)
@@ -113,3 +104,17 @@ test('should show confirm password error message if password does not match', ()
   const confrimPasswordError = screen.queryByTestId('form-input-confirm-password-error');
   expect(confrimPasswordError).toBeInTheDocument();
 });
+
+test('should not show error messages if data is valid', () => {
+  typeIntoForm({
+    email: 'adonis@gmail.com',
+    password: 'XUG0gxf0ztx!rea3vhe',
+    confirmPassword: 'XUG0gxf0ztx!rea3vhe'
+  });
+
+  const passwordError = screen.queryByTestId('form-input-password-error');
+  expect(passwordError).not.toBeInTheDocument();
+
+  const confrimPasswordError = screen.queryByTestId('form-input-confirm-password-error');
+  expect(confrimPasswordError).not.toBeInTheDocument();
+})
