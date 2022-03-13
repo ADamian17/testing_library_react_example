@@ -4,8 +4,6 @@ import userEvents from '@testing-library/user-event';
 import App from './App';
 
 beforeEach(() => {
-  /* {render()} this method renders the component that we want to test, in the shadow dom and all it children  */
-
   // eslint-disable-next-line testing-library/no-render-in-setup
   render(<App />)
 });
@@ -31,18 +29,6 @@ const typeIntoForm = ({email, password, confirmPassword }) => {
     confirmPasswordEl
   }
 }
-
-// afterEach(() => {
-//   console.log("this hook runs after each test");
-// });
-
-// beforeAll(() => {
-//   console.log("this hook runs once before all test");
-// });
-
-// afterAll(() => {
-//   console.log("this hook runs once after all test");
-// });
 
 test('input should be initially epmty', () => {
   /* {screen} help us to find the element*/
